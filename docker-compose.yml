@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  code-generator:
+    build: .
+    container_name: code-generator
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./code_cache:/app/code_cache
+    environment:
+      - GRADIO_SERVER_NAME=0.0.0.0
+      - GRADIO_SERVER_PORT=8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - code-generator-net
+
+networks:
+  code-generator-net:
+    driver: bridge
